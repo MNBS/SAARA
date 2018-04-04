@@ -49,6 +49,7 @@ int totalhomeCorrection;
 int drinkTotalCorrection;
 
 int hm1home;
+int servoDirection, servoDirection2, servoRequired, servoRequired2;
 
 typedef struct
 {
@@ -80,7 +81,7 @@ int greenLed = 17;
 int blueLed = 5;
 
 int joystickX, joystickY; 
-float hm1pos = 120;
+float hm1pos = 20;
 float gripperpos = 90;
 
 volatile int modeFlag = 0;
@@ -192,7 +193,7 @@ void setup()
 
   hm1.attach(6);
   grip.attach(7);
-  // hm1.write(hm1pos);
+  hm1.write(hm1pos);
   grip.write(gripperpos);
 }
 
@@ -280,113 +281,12 @@ void loop()
     }
   }
 
-  if (power)
-  {
-    digitalWrite(relayPin, HIGH);
-    while (led3 < 1){
-      pixels.setPixelColor(0, pixels.Color(10,10,0)); // Moderately bright green color.
-      pixels.setPixelColor(1, pixels.Color(10,10,0)); // Moderately bright green color.
-      pixels.setPixelColor(2, pixels.Color(10,10,0)); // Moderately bright green color.
-      pixels.show(); // This sends the updated pixel color to the hardware.
-      led3 += 1; 
-    }
-    while(servoCount < 1){ 
-      hm1.attach(6); 
-      grip.attach(7);
-      servoCount += 1; 
-    }
-    while(delayCount < 1){
-      delay(5000);
-      delayCount += 1; 
-    }
-
-    digitalWrite(sm2.dirpin, HIGH);
-    while (sm2Count < 1800)
-    {
-      digitalWrite(sm2.pin, HIGH);
-      delayMicroseconds(600);
-      digitalWrite(sm2.pin, LOW);
-      delayMicroseconds(600);
-      sm2Count++;
-    }
-
-  //   while (accelerometer < 5000){
-  //   imu.readAccel();
-  //   y_accel2 = imu.calcAccel(imu.ay);
-  //   Serial.print("  y_accel: ");Serial.println(y_accel2); 
-  //   while (y_accel2 > -0.2){
-  //     digitalWrite(em1.dirpin, HIGH); 
-  //     makeSteps(em1.pin, 400, 5);
-  //     y_accel2 -= 1;
-  //   }
-  //   accelerometer++;
-  // }
-  while (accelerometer2 < 5000){
-    imu.readAccel();
-    y_accel = imu.calcAccel(imu.ay);
-    Serial.print("  y_accel: ");Serial.println(y_accel); 
-    if (y_accel > 0.8){
-      digitalWrite(sm2.dirpin, LOW); 
-      makeStep(sm2.pin, 600);
-      // y_accel -= 1;
-    }
-    accelerometer2++;
-  }
-  
-  if (accelerometer2 == 5000){ 
-    digitalWrite(em1.dirpin, HIGH);
-    digitalWrite(sm2.dirpin, HIGH);
-    while (em1Count < 5000)
-    {
-      // if (em1Count < 1800) digitalWrite(sm2.pin, HIGH);
-      if (em1Count < 5000) digitalWrite(em1.pin, HIGH);
-      delayMicroseconds(600);
-      // if (em1Count < 1800) digitalWrite(sm2.pin, LOW);
-      if (em1Count < 5000) digitalWrite(em1.pin, LOW);
-      delayMicroseconds(600);
-      em1Count++;
-    }
-  }     
-    while (timer < 1)
-    {
-      delay(4000);
-      timer++;
-    }
-    while (hm1count < 100){
-      if (hm1pos > 70){
-        hm1.write(hm1pos);
-        hm1pos -= 0.5; 
-        delay(25); 
-        hm1count ++; 
-      }
-    }
-    while (led2 < 1){
-      pixels.setPixelColor(0, pixels.Color(0,10,0)); // Moderately bright green color.
-      pixels.setPixelColor(1, pixels.Color(0,10,0)); // Moderately bright green color.
-      pixels.setPixelColor(2, pixels.Color(0,10,0)); // Moderately bright green color.
-      pixels.show(); // This sends the updated pixel color to the hardware.
-      led2 += 1; 
-    }
-    v = 0;
-    r = 0;
-    t = 0;
-    w = 0;
-    led4 = 0;
-    accelerometer = 0; 
+  if (power){
+    powerOn(); 
   }
   else
   {
     powerOff();
-    timer = 0;
-    sm2Count = 0;
-    accelerometer2 = 0; 
-    em1Count = 0;
-    hm1count = 0;
-    servoCount = 0;
-    led2 = 0;
-    led3 = 0;
-    mode =0; 
-    delayCount = 0; 
   }
 
   if (mode)
@@ -579,7 +479,7 @@ void upDown(){
     if (em2.step > -1072 && em2.step < 1072)
     {
       hm1.write(hm1pos);
-      hm1pos -= 0.10;
+      hm1pos += 0.12;
       // delayMicroseconds(15);
     }
   }
@@ -594,7 +494,7 @@ void upDown(){
     if (em2.step > -1072 && em2.step < 1072)
     {
       hm1.write(hm1pos);
-      hm1pos -= 0.12;
+      hm1pos += 0.14;
       // delayMicroseconds(15);
     }
   }
@@ -609,7 +509,7 @@ void upDown(){
     if (em2.step > -1072 && em2.step < 1072)
     {
       hm1.write(hm1pos);
-      hm1pos += 0.10;
+      hm1pos -= 0.12;
       // delayMicroseconds(15);
     }
   }
@@ -624,7 +524,7 @@ void upDown(){
     if (em2.step > -1072 && em2.step < 1072)
     {
       hm1.write(hm1pos);
-      hm1pos += 0.12;
+      hm1pos -= 0.14;
       // delayMicroseconds(15);
     }
   }
@@ -640,7 +540,7 @@ void down(){
     if (em2.step > -1072 && em2.step < 1072)
     {
       hm1.write(hm1pos);
-      hm1pos += 0.10;
+      hm1pos -= 0.12;
       // delayMicroseconds(15);
     }
   }
@@ -655,7 +555,7 @@ void down(){
     if (em2.step > -1072 && em2.step < 1072)
     {
       hm1.write(hm1pos);
-      hm1pos += 0.12;
+      hm1pos -= 0.14;
       // delayMicroseconds(15);
     }
   }
@@ -693,34 +593,36 @@ void hm1move()
 {
   if (joystickY > 600)
   {
-    if (hm1pos > 0 && hm1pos < 120 || hm1pos >= 120)
+    if (hm1pos > 20 && hm1pos < 120 || hm1pos <= 20)
     {
-      hm1pos -= 0.5;
+      hm1pos += 0.5;
       hm1.write(hm1pos);
-      delay(10);
+      delay(20);
     }
   }
   else if (joystickY < 450)
   {
-    if (hm1pos > 0 && hm1pos < 120 || hm1pos <= 0)
+    if (hm1pos > 0 && hm1pos < 120 || hm1pos >= 120)
     {
-      hm1pos += 0.5;
+      hm1pos -= 0.5;
       hm1.write(hm1pos);
-      delay(10);
+      delay(20);
     }
   }
 }
 
 void em2move()
 {
-  if (joystickX < 450)
+  if (joystickX > 600)
   {
+    delayMicroseconds(100);
     digitalWrite(em2.dirpin, LOW);
     makeStep(em2.pin, 600);
     em2.step++;
   }
-  else if (joystickX > 600)
+  else if (joystickX < 450)
   {
+    delayMicroseconds(100);
     digitalWrite(em2.dirpin, HIGH);
     makeStep(em2.pin, 600);
     em2.step--;
@@ -797,7 +699,7 @@ void setHome(int home, int address)
 
 void leftRight()
 {
-  (joystickX > 850 || joystickX < 300) ? speed = 500: speed = 1000;
+  (joystickX > 850 || joystickX < 300) ? speed = 400: speed = 800;
   if (joystickX > 600)
   {
     digitalWrite(sm1.dirpin, HIGH);
@@ -839,11 +741,11 @@ void makeServoSteps(int motor, int speed, int correction, int direction)
   {
     if (direction)
     {
-      hm1pos += 0.01;
+      hm1pos -= 0.01;
     }
     else
     {
-      hm1pos -= 0.01;
+      hm1pos += 0.01;
     }
     hm1.write(hm1pos);
     i++;
@@ -857,11 +759,11 @@ void makeServoSteps2(int motor, int speed, int correction, int direction)
   {
     if (direction)
     {
-      hm1pos -= 0.01;
+      hm1pos += 0.01;
     }
     else
     {
-      hm1pos -= 0.01;
+      hm1pos += 0.01;
     }
     hm1.write(hm1pos);
     i++;
@@ -889,9 +791,9 @@ void powerOff()
   led4 += 1;
   }
 
-  while (hm1pos < 120){
+  while (hm1pos > 20){
     hm1.write(hm1pos);
-    hm1pos += 0.5;
+    hm1pos -= 0.5;
     delay(25); 
   }
   
@@ -966,23 +868,6 @@ void powerOff()
     delayMicroseconds(400);
     t++;
   }
-  // while (accelerometer < 4000){
-  //   imu.readAccel();
-  //   x_accel = imu.calcAccel(imu.ax);
-  //   Serial.print("  x_accel: ");Serial.println(x_accel); 
-  //   while (x_accel > 0.23){
-  //     digitalWrite(sm1.dirpin, HIGH); 
-  //     makeSteps(sm1.pin, 600, 10);
-  //     x_accel -= 1;
-  //   }
-    // while (x_accel < 0.1){
-    //   digitalWrite(sm1.dirpin, LOW); 
-    //   makeSteps(sm1.pin, 600, 5); 
-    //   x_accel += 1;
-    // }
-  //   accelerometer++;
-  // }
-
 
   sm1.step = 0;
   sm2.step = 0;
@@ -996,61 +881,56 @@ void powerOff()
   pixels.setPixelColor(1, pixels.Color(10,0,0)); // Moderately bright green color.
   pixels.setPixelColor(2, pixels.Color(10,0,0)); // Moderately bright green color.
   pixels.show(); // This sends the updated pixel color to the hardware.
-
+    
+  timer = 0;
+  sm2Count = 0;
+  accelerometer2 = 0; 
+  em1Count = 0;
+  hm1count = 0;
+  servoCount = 0;
+  led2 = 0;
+  led3 = 0;
+  mode =0; 
+  delayCount = 0; 
 }
 
 void goToHome()
 {
-  int servoDirection, servoDirection2, servoRequired;
   if (sm1.step <= sm1.home)
   {
     sm1.homeCorrection = abs(sm1.step - sm1.home);
     digitalWrite(sm1.dirpin, LOW);
-    servoDirection = 0;
-    servoDirection2 = 0;
-    servoRequired = 0;
   }
   else if (sm1.step >= sm1.home)
   {
     sm1.homeCorrection = abs(sm1.home - sm1.step);
     digitalWrite(sm1.dirpin, HIGH);
-    servoDirection = 0;
-    servoDirection2 = 0;
-    servoRequired = 0;
   }
 
   if (em2.step <= em2.home)
   {
     em2.homeCorrection = abs(em2.step - em2.home);
     digitalWrite(em2.dirpin, LOW);
-    servoDirection = 0;
-    servoDirection2 = 0;
-    servoRequired = 0;
   }
   else if (em2.step > em2.home)
   {
     em2.homeCorrection = abs(em2.home - em2.step);
     digitalWrite(em2.dirpin, HIGH);
-    servoDirection = 0;
-    servoDirection2 = 0;
-    servoRequired = 0;
   }
 
   if (sm2.step <= sm2.home)
   {
     sm2.homeCorrection = abs(sm2.step - sm2.home);
     digitalWrite(sm2.dirpin, HIGH);
-    servoDirection = 0;
-    servoDirection2 = 0;
-    servoRequired = 1;
+    servoDirection2 = 1;
+    servoRequired2 = 1;
   }
   else if (sm2.step > sm2.home)
   {
     sm2.homeCorrection = abs(sm2.home - sm2.step);
     digitalWrite(sm2.dirpin, LOW);
-    servoDirection = 0;
-    servoDirection2 = 1;
-    servoRequired = 1;
+    servoDirection2 = 0;
+    servoRequired2 = 1;
   }
 
   if (em1.step <= em1.home)
@@ -1058,7 +938,6 @@ void goToHome()
     em1.homeCorrection = abs(em1.step - em1.home);
     digitalWrite(em1.dirpin, HIGH);
     servoDirection = 1;
-    servoDirection2 = 0;
     servoRequired = 1;
   }
   else if (em1.step > em1.home)
@@ -1066,7 +945,6 @@ void goToHome()
     em1.homeCorrection = abs(em1.home - em1.step);
     digitalWrite(em1.dirpin, LOW);
     servoDirection = 0;
-    servoDirection2 = 0;
     servoRequired = 1;
   }
   totalhomeCorrection = max(em1.homeCorrection, max(em2.homeCorrection, sm2.homeCorrection));
@@ -1092,34 +970,43 @@ void goToHome()
       {
         if (servoDirection)
         {
-          hm1pos -= 0.015;
-          hm1.write(hm1pos);
+          if (hm1pos < 118){
+            hm1pos += 0.015;
+            hm1.write(hm1pos);
+          }
         }
         else
         {
-          hm1pos += 0.015;
-          hm1.write(hm1pos);
+          if (hm1pos > 22){
+            hm1pos -= 0.015;
+            hm1.write(hm1pos);
+          }
         }
       }
     }
-
     if (w < sm2.homeCorrection)
     {
-      if (servoRequired)
+      if (servoRequired2)
       {
+        Serial.println(servoDirection2);
         if (servoDirection2)
         {
+          if (hm1pos > 22){
           hm1pos -= 0.012;
           hm1.write(hm1pos);
+          }
         }
         else
         {
-          hm1pos -= 0.012;
+          if (hm1pos < 118){
+          hm1pos += 0.012;
           hm1.write(hm1pos);
+          }
         }
       }
     }
     w++;
+
   }
 
   while (t < sm1.homeCorrection)
@@ -1144,34 +1031,22 @@ void goToDrink()
   {
     sm1.drinkCorrection = abs(sm1.step - sm1.home2);
     digitalWrite(sm1.dirpin, LOW);
-    servoRequired = 0;
-    servoDirection = 0;
-    servoDirection2 = 0;
   }
   else if (sm1.step >= sm1.home2)
   {
     sm1.drinkCorrection = abs(sm1.home2 - sm1.step);
     digitalWrite(sm1.dirpin, HIGH);
-    servoRequired = 0;
-    servoDirection = 0;
-    servoDirection2 = 0;
   }
 
   if (em2.step <= em2.home2)
   {
     em2.drinkCorrection = abs(em2.step - em2.home2);
     digitalWrite(em2.dirpin, LOW);
-    servoRequired = 0;
-    servoDirection = 0;
-    servoDirection2 = 0;
   }
   else if (em2.step > em2.home2)
   {
     em2.drinkCorrection = abs(em2.home2 - em2.step);
     digitalWrite(em2.dirpin, HIGH);
-    servoRequired = 0;
-    servoDirection = 0;
-    servoDirection2 = 0;
   }
 
   if (sm2.step <= sm2.home2)
@@ -1180,14 +1055,12 @@ void goToDrink()
     digitalWrite(sm2.dirpin, HIGH);
     servoRequired = 1;
     servoDirection2 = 0;
-    servoDirection = 0;
   }
   else if (sm2.step > sm2.home2)
   {
     sm2.drinkCorrection = abs(sm2.home2 - sm2.step);
     digitalWrite(sm2.dirpin, LOW);
-    servoRequired = 0;
-    servoDirection = 0;
+    servoRequired = 1;
     servoDirection2 = 1;
   }
 
@@ -1197,7 +1070,6 @@ void goToDrink()
     digitalWrite(em1.dirpin, HIGH);
     servoRequired = 1;
     servoDirection = 1;
-    servoDirection2 = 0;
   }
   else if (em1.step > em1.home2)
   {
@@ -1205,7 +1077,6 @@ void goToDrink()
     digitalWrite(em1.dirpin, LOW);
     servoRequired = 1;
     servoDirection = 0;
-    servoDirection2 = 0;
   }
 
   drinkTotalCorrection = max(sm2.drinkCorrection, max(em1.drinkCorrection, em2.drinkCorrection));
@@ -1233,13 +1104,17 @@ void goToDrink()
       {
         if (servoDirection)
         {
-          hm1pos -= 0.014;
-          hm1.write(hm1pos);
+          if (hm1pos < 118){
+            hm1pos += 0.014;
+            hm1.write(hm1pos);
+          }
         }
         else
         {
-          hm1pos += 0.014;
-          hm1.write(hm1pos);
+          if (hm1pos > 22){
+            hm1pos -= 0.014;
+            hm1.write(hm1pos);
+          }
         }
       }
     }
@@ -1250,13 +1125,17 @@ void goToDrink()
       {
         if (servoDirection2)
         {
-          hm1pos += 0.014;
-          hm1.write(hm1pos);
+          if (hm1pos > 22){
+            hm1pos += 0.014;
+            hm1.write(hm1pos);
+          }
         }
         else
         {
-          hm1pos -= 0.014;
-          hm1.write(hm1pos);
+          if (hm1pos < 118){
+            hm1pos -= 0.014;
+            hm1.write(hm1pos);
+          }
         }
       }
     }
@@ -1276,3 +1155,85 @@ void goToDrink()
   upDownCount = upDownCountHome2;
 }
 
+void powerOn(){ 
+  digitalWrite(relayPin, HIGH);
+    while (led3 < 1){
+      pixels.setPixelColor(0, pixels.Color(10,10,0)); // Moderately bright green color.
+      pixels.setPixelColor(1, pixels.Color(10,10,0)); // Moderately bright green color.
+      pixels.setPixelColor(2, pixels.Color(10,10,0)); // Moderately bright green color.
+      pixels.show(); // This sends the updated pixel color to the hardware.
+      led3 += 1; 
+    }
+    while(servoCount < 1){ 
+      hm1.attach(6); 
+      grip.attach(7);
+      servoCount += 1; 
+    }
+    while(delayCount < 1){
+      delay(5000);
+      delayCount += 1; 
+    }
+
+    digitalWrite(sm2.dirpin, HIGH);
+    while (sm2Count < 1800)
+    {
+      digitalWrite(sm2.pin, HIGH);
+      delayMicroseconds(600);
+      digitalWrite(sm2.pin, LOW);
+      delayMicroseconds(600);
+      sm2Count++;
+    }
+
+  while (accelerometer2 < 5000){
+    imu.readAccel();
+    y_accel = imu.calcAccel(imu.ay);
+    Serial.print("  y_accel: ");Serial.println(y_accel); 
+    if (y_accel > 0.7){
+      digitalWrite(sm2.dirpin, LOW); 
+      makeStep(sm2.pin, 600);
+      // y_accel -= 1;
+    }
+    accelerometer2++;
+  }
+  
+  if (accelerometer2 == 5000){ 
+    digitalWrite(em1.dirpin, HIGH);
+    digitalWrite(sm2.dirpin, HIGH);
+    while (em1Count < 5000)
+    {
+      // if (em1Count < 1800) digitalWrite(sm2.pin, HIGH);
+      if (em1Count < 5000) digitalWrite(em1.pin, HIGH);
+      delayMicroseconds(600);
+      // if (em1Count < 1800) digitalWrite(sm2.pin, LOW);
+      if (em1Count < 5000) digitalWrite(em1.pin, LOW);
+      delayMicroseconds(600);
+      em1Count++;
+    }
+  }     
+    while (timer < 1)
+    {
+      delay(4000);
+      timer++;
+    }
+    while (hm1count < 100){
+      if (hm1pos < 70){
+        hm1.write(hm1pos);
+        hm1pos += 0.5; 
+        delay(25); 
+        hm1count ++; 
+      }
+    }
+    while (led2 < 1){
+      pixels.setPixelColor(0, pixels.Color(0,10,0)); // Moderately bright green color.
+      pixels.setPixelColor(1, pixels.Color(0,10,0)); // Moderately bright green color.
+      pixels.setPixelColor(2, pixels.Color(0,10,0)); // Moderately bright green color.
+      pixels.show(); // This sends the updated pixel color to the hardware.
+      led2 += 1; 
+    }
+    v = 0;
+    r = 0;
+    t = 0;
+    w = 0;
+    led4 = 0;
+    accelerometer = 0; 
+}
