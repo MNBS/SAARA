@@ -843,13 +843,8 @@ void doorOpen()
 void powerOff()
 {
   while (led4 < 1){
-  pixels.setPixelColor(0, pixels.Color(10,10,0)); // Moderately bright green color.
-  pixels.setPixelColor(1, pixels.Color(10,10,0)); // Moderately bright green color.
-  pixels.setPixelColor(2, pixels.Color(10,10,0)); // Moderately bright green color.
-  pixels.setPixelColor(3, pixels.Color(10,10,0)); // Moderately bright green color.
-  pixels.setPixelColor(4, pixels.Color(10,10,0)); // Moderately bright green color.
-  pixels.show(); // This sends the updated pixel color to the hardware.
-  led4 += 1;
+    showLED(10, 10, 0);
+    led4 += 1;
   }
 
   while (hm1Test < 2300){
@@ -938,13 +933,7 @@ void powerOff()
 
   digitalWrite(relayPin, LOW);
   
-  pixels.setPixelColor(0, pixels.Color(10,0,0)); // Moderately bright green color.
-  pixels.setPixelColor(1, pixels.Color(10,0,0)); // Moderately bright green color.
-  pixels.setPixelColor(2, pixels.Color(10,0,0)); // Moderately bright green color.
-  pixels.setPixelColor(3, pixels.Color(10,0,0)); // Moderately bright green color.
-  pixels.setPixelColor(4, pixels.Color(10,0,0)); // Moderately bright green color.
-  pixels.show(); // This sends the updated pixel color to the hardware.
-    
+  showLED(10, 0, 0);    
   timer = 0;
   sm2Count = 0;
   sm2Count2 = 0;
@@ -1297,4 +1286,18 @@ void powerOn(){
     w = 0;
     led4 = 0;
     accelerometer = 0; 
+}
+
+void showLED(int a, int b, int c)
+{
+  pixels.setPixelColor(0, pixels.Color(a, b , c)); 
+  pixels.show();
+  pixels.setPixelColor(1, pixels.Color(a, b , c)); 
+  pixels.show();
+  pixels.setPixelColor(2, pixels.Color(a, b , c)); 
+  pixels.show();
+  pixels.setPixelColor(3, pixels.Color(a, b , c)); 
+  pixels.show();
+  pixels.setPixelColor(4, pixels.Color(a, b , c)); 
+  pixels.show(); 
 }
